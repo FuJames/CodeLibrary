@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--PUBLIC后面跟着的可以用于验证文档结构的 DTD 系统标识符和公共标识符。-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="code.library.mybatis.useMapper.UserMapper" ><!--namespace是必须的,指向对应的java interface,要把包名写全,此例中为com.fqz.mybatis.dao.UserMapper -->
+
+    <resultMap id="User" type="code.library.mybatis.entity.User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="mobile" column="mobile"/>
+    </resultMap>
+
+    <insert id="insertUser" parameterType="code.library.mybatis.entity.User" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO
+        User
+        (name,sex,mobile)
+        VALUES
+        (#{name},#{sex},#{mobile})
+    </insert>
+    <!--#{name},只需要写属性名称就行,见DefaultParameterHandler第79行,是根据反射获取属性值-->
+</mapper>
