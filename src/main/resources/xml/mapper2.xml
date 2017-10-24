@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--PUBLIC后面跟着的可以用于验证文档结构的 DTD 系统标识符和公共标识符。-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="code.library.mybatis.useMapper.UserMapper2" ><!--namespace是必须的,指向对应的java interface,要把包名写全,此例中为com.fqz.mybatis.dao.UserMapper -->
+    <select id="selectById2" parameterType="int" resultMap="code.library.mybatis.useMapper.UserMapper.User">
+        SELECT * FROM USER
+        WHERE
+        id = #{id}
+    </select>
+</mapper>

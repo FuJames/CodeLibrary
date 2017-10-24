@@ -15,6 +15,7 @@
     </environments>
     <mappers>
         <mapper resource="xml/mapper.xml"/>
+        <mapper resource="xml/mapper2.xml"/>
         <!-- 注册UserMapper映射接口-->
         <mapper class="code.library.mybatis.useMapper.UserMapper"/>
     </mappers>

@@ -19,9 +19,11 @@ public class SqlOperation {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             //statement对应的是mapper.xml中的namespace + sqlId
-            sqlSession.insert("code.library.mybatis.useMapper.UserMapper.insertUser",user);
-            System.out.println(user.getId());
+//            sqlSession.insert("code.library.mybatis.useMapper.UserMapper.insertUser",user);
+            User userSelected = sqlSession.selectOne("code.library.mybatis.useMapper.UserMapper.selectById",91);
             sqlSession.commit();
+            sqlSession.selectOne("code.library.mybatis.useMapper.UserMapper.selectById",91);
+            System.out.println(userSelected);
         }catch (Exception ex){
             ex.printStackTrace();
         }finally {

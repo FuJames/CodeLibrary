@@ -17,5 +17,11 @@
         VALUES
         (#{name},#{sex},#{mobile})
     </insert>
+
+    <select id="selectById" parameterType="int" resultMap="User" useCache="true">
+        SELECT * FROM USER
+        WHERE
+        id = #{id}
+    </select>
     <!--#{name},只需要写属性名称就行,见DefaultParameterHandler第79行,是根据反射获取属性值-->
 </mapper>
