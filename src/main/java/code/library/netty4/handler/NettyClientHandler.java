@@ -1,15 +1,13 @@
 package code.library.netty4.handler;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import code.library.netty4.codec.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.CharsetUtil;
 
 /**
  * Created by fuqianzhong on 16/9/30.
  */
-public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     /**
      * 当client与server连接成功后调用
      * @param context
@@ -17,7 +15,6 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
      */
     @Override
     public void channelActive(ChannelHandlerContext context)throws Exception{
-        context.writeAndFlush(Unpooled.copiedBuffer("Hello server", CharsetUtil.UTF_8));
     }
 
     /**
@@ -27,8 +24,10 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext context, ByteBuf msg) throws Exception {
-        System.out.println("Client received : " + msg.toString(CharsetUtil.UTF_8));
+    protected void channelRead0(ChannelHandlerContext context, RpcResponse msg) throws Exception {
+        if(msg != null){
+            System.out.println(msg);
+        }
     }
 
     /**

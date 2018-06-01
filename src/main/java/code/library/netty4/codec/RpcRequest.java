@@ -1,4 +1,4 @@
-package code.library.netty4.server.codec;
+package code.library.netty4.codec;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -10,17 +10,17 @@ import java.util.Arrays;
 public class RpcRequest implements Serializable{
     private static final long serialVersionUID = -6898431081897296544L;
 
-    private int requestId;
+    private String requestId;
     private long createMillisTime;
     private String className;
     private String methodName;
     private Class<?>[] parameterTypes;
     private Object[] parameters;
 
-    public int getRequestId() {
+    public String getRequestId() {
         return requestId;
     }
-    public void setRequestId(int requestId) {
+    public void setRequestId(String requestId) {
         this.requestId = requestId;
     }
     public long getCreateMillisTime() {

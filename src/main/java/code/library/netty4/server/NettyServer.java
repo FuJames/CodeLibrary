@@ -1,5 +1,9 @@
 package code.library.netty4.server;
 
+import code.library.netty4.codec.NettyDecoder;
+import code.library.netty4.codec.NettyEncoder;
+import code.library.netty4.codec.RpcRequest;
+import code.library.netty4.codec.RpcResponse;
 import code.library.netty4.handler.NettyServerHandler;
 import code.library.serializer.HessianSerializer;
 import code.library.serializer.Serializer;
@@ -32,12 +36,13 @@ public class NettyServer {
                          @Override
                          protected void initChannel(SocketChannel socketChannel) throws Exception {
                              socketChannel.pipeline()
-//                                     .addLast(new NettyEncoder())
+                                     .addLast(new NettyEncoder(RpcResponse.class,serializer))//encoder将response转化为字节流
+                                     .addLast(new NettyDecoder(RpcRequest.class,serializer))//decoder将字节流转化为request
                                      .addLast(new NettyServerHandler());
                          }
                      });//设置channel的处理类,使用责任链模式,channel对应管道(pipeline),向管道中添加处理类
             ChannelFuture cf = bootstrap.bind(port).sync();//Server绑定到端口,等待连接,同步阻塞的方式
-            System.out.println(NettyServer.class.getName() + " started and listen on " + cf.channel().localAddress());
+            System.out.println("NettyServer started and listen on " + cf.channel().localAddress());
             cf.channel().closeFuture().sync();//同步阻塞的方式等待服务器端口关闭
         } catch (InterruptedException e) {
             e.printStackTrace();

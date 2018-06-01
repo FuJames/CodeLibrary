@@ -1,4 +1,4 @@
-package code.library.netty4.server.codec;
+package code.library.netty4.codec;
 
 import code.library.serializer.Serializer;
 import io.netty.buffer.ByteBuf;
@@ -19,11 +19,12 @@ public class NettyEncoder extends MessageToByteEncoder<Object> {
         this.serializer = serializer;
     }
 
-
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         if(msgClass.isInstance(msg)){
-//            serializer.serialize();
+            byte[] bytes = serializer.serialize(msg);
+            out.writeInt(bytes.length);
+            out.writeBytes(bytes);
         }
     }
 }

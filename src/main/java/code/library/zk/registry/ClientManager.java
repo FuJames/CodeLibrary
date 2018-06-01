@@ -1,6 +1,7 @@
 package code.library.zk.registry;
 
 import code.library.netty4.client.NettyClient;
+import code.library.serializer.HessianSerializer;
 
 import java.util.Collections;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class ClientManager {
     public static void addServers(String serviceKey,Set<ServerInfo> serverSet) {
         //遍历服务端地址,建立netty连接
         for(ServerInfo serverInfo : serverSet){
-            NettyClient client = new NettyClient(serverInfo);
+            NettyClient client = new NettyClient(serverInfo, new HessianSerializer());
 //            client.doConnect();
         }
         Set<ServerInfo> serverSetOld = servers.get(serviceKey);
