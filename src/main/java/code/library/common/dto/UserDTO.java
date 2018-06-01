@@ -1,18 +1,43 @@
 package code.library.common.dto;
 
-import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 
 /**
  * Created by fuqianzhong on 17/9/22.
  */
-@Data
+@ToString
 public class UserDTO implements Serializable {
     private static final long serialVersionUID = -3652431661699986732L;
 
-    private Integer id;
+    private int age;
+
     private String name;
-    private Boolean sex;/*1:男,0:女*/
-    private String mobile;
+
+    private String address;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

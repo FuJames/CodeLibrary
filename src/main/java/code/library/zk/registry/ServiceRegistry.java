@@ -2,6 +2,8 @@ package code.library.zk.registry;
 
 import code.library.zk.curator.CuratorClient;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,4 +42,23 @@ public class ServiceRegistry {
         return curatorClient.getData(path);
     }
 
+    public static void notifyClients(String path, String addr) {
+        String serviceKey = ServerUtils.parseServiceKey(path);
+        Set<ServerInfo> newServers = ServerUtils.parseServerAddress(addr);
+        Set<ServerInfo> oldServers = ClientManager.getServers(serviceKey);
+        Set<ServerInfo> toAddServers = Collections.emptySet();
+        Set<ServerInfo> toRemoveServers = Collections.emptySet();
+        if(oldServers == null){
+            toAddServers = newServers;
+        }else {
+            toRemoveServers = Collections.newSetFromMap(new ConcurrentHashMap<ServerInfo, Boolean>());
+            toRemoveServers.addAll(oldServers);
+            toRemoveServers.removeAll(newServers);
+            toAddServers = Collections.newSetFromMap(new ConcurrentHashMap<ServerInfo, Boolean>());
+            toAddServers.addAll(newServers);
+            toAddServers.removeAll(oldServers);
+        }
+        ClientManager.addServers(serviceKey,toAddServers);
+        ClientManager.removeServers(serviceKey,toRemoveServers);
+    }
 }

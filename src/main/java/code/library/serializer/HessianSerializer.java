@@ -2,10 +2,10 @@ package code.library.serializer;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
+import com.caucho.hessian.io.HessianInput;
+import com.caucho.hessian.io.HessianOutput;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * @author fuqianzhong
@@ -14,8 +14,38 @@ import java.io.OutputStream;
  * 1. 性能更佳 2. 占用空间更小
  * 适合rpc中的序列化层
  */
-public class HessianSerializer implements Serializer {
+public class HessianSerializer extends Serializer {
     @Override
+    public <T> byte[] serialize(T obj) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        HessianOutput ho = new HessianOutput(os);
+        try {
+            ho.writeObject(obj);
+            ho.flush();
+        } catch (IOException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        } finally {
+            try {
+                ho.close();
+            } catch (IOException e) {
+            }
+        }
+        return os.toByteArray();
+    }
+
+    @Override
+    public <T> T deserialize(byte[] bytes, Class<T> clazz) {
+        ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+        HessianInput hi = new HessianInput(is);
+        try {
+            return (T) hi.readObject();
+        } catch (IOException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }finally {
+            hi.close();
+        }
+    }
+
     public void serialize(Object obj, OutputStream os) {
         try {
             Hessian2Output ho = new Hessian2Output(os);
@@ -26,11 +56,10 @@ public class HessianSerializer implements Serializer {
                 ho.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
-    @Override
     public Object deserialize(InputStream is) {
         try {
             Hessian2Input hi = new Hessian2Input(is);
@@ -40,7 +69,7 @@ public class HessianSerializer implements Serializer {
                 hi.close();
             }
         } catch (Throwable t) {
-            return null;
+            throw new IllegalStateException(t.getMessage(), t);
         }
     }
 }

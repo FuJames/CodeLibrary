@@ -1,5 +1,6 @@
 package code.library.zk.curator;
 
+import code.library.zk.registry.ServiceRegistry;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.framework.api.CuratorListener;
@@ -27,10 +28,7 @@ public class CuratorEventListener implements CuratorListener {
         }
         String path = event.getPath();
         String addr = this.client.getData(path);
-        //修改注册中心服务列表的缓存
-//        ServiceRegistry.cacheServer(path,addr);
-//        ClientManager.
-//        ServiceRegistry.notifyClients()
+        ServiceRegistry.notifyClients(path, addr);
     }
 }
 

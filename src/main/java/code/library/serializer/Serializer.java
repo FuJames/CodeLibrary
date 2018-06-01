@@ -1,15 +1,12 @@
 package code.library.serializer;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 /**
  * @author fuqianzhong
  * @date 18/5/16
  * 序列化的接口类,定义待实现的方法
  */
-public interface Serializer {
-    void serialize(Object obj,OutputStream os);
+public abstract class Serializer {
+    public abstract <T> byte[] serialize(T obj);
 
-    Object deserialize(InputStream is);
+    public abstract <T> T deserialize(byte[] bytes, Class<T> clazz);
 }

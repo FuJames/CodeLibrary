@@ -27,4 +27,15 @@ public class ServerUtils {
         }
        return serverSet;
     }
+
+    public static String parseServiceKey(String path) {
+        if(StringUtils.isEmpty(path)){
+            return null;
+        }
+        int index = path.lastIndexOf("/");
+        if(index > 0){
+            return path.substring(index+1);
+        }
+        return null;
+    }
 }

@@ -10,6 +10,20 @@ public class ServerInfo {
 
     private int port;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ServerInfo) {
+            ServerInfo serverInfo = (ServerInfo) obj;
+            return this.ip.equals(serverInfo.ip) && this.port == serverInfo.port;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return ip.hashCode() + port;
+    }
+
     public String getIp() {
         return ip;
     }
