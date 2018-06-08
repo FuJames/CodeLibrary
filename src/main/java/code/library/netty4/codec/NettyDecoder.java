@@ -1,6 +1,8 @@
 package code.library.netty4.codec;
 
 import code.library.serializer.Serializer;
+import code.library.serializer.SerializerFactory;
+import code.library.serializer.SerializerType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -10,14 +12,13 @@ import java.util.List;
 /**
  * @author fuqianzhong
  * @date 18/6/1
+ * 字节流转化为对象
  */
 public class NettyDecoder extends ByteToMessageDecoder {
     private Class<?> msgClass;
-    private Serializer serializer;
 
-    public NettyDecoder(Class<?> msgClass,Serializer serializer){
+    public NettyDecoder(Class<?> msgClass){
         this.msgClass = msgClass;
-        this.serializer = serializer;
     }
 
     @Override
@@ -25,6 +26,8 @@ public class NettyDecoder extends ByteToMessageDecoder {
         if (in.readableBytes() < 4) {
             return;
         }
+        byte serialize = in.readByte();
+        Serializer serializer = SerializerFactory.getSerializer(SerializerType.getSerializerType(serialize));
         in.markReaderIndex();
         int dataLength = in.readInt();
         if (dataLength < 0) {
@@ -36,7 +39,6 @@ public class NettyDecoder extends ByteToMessageDecoder {
         }
         byte[] data = new byte[dataLength];
         in.readBytes(data);
-
         Object obj = serializer.deserialize(data, msgClass);
         out.add(obj);
     }

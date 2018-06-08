@@ -1,22 +1,23 @@
 package code.library.zk.registry;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 /**
  * @author fuqianzhong
  * @date 18/5/21
  */
 public class ServerUtils {
-    public static Set<ServerInfo> parseServerAddress(String serverAddr){
-        if(StringUtils.isEmpty(serverAddr)){
+    //IP:Port 列表
+    public static Set<ServerInfo> parseServerAddressList(List<String> serverAddrList){
+        if(CollectionUtils.isEmpty(serverAddrList)){
             return null;
         }
         Set<ServerInfo> serverSet = new HashSet<ServerInfo>();
-
-        String[] addrs = serverAddr.split(",");
-        for(String addr : addrs){
+        for(String addr : serverAddrList){
             String[] parts = addr.split(":");
             String host = parts[0];
             String port = parts[1];
@@ -27,8 +28,8 @@ public class ServerUtils {
         }
        return serverSet;
     }
-
-    public static String parseServiceKey(String path) {
+    // /SERVER/{ServiceKey}/IP:PORT -> IP:PORT
+    public static String parseServiceAddress(String path) {
         if(StringUtils.isEmpty(path)){
             return null;
         }
@@ -37,5 +38,27 @@ public class ServerUtils {
             return path.substring(index+1);
         }
         return null;
+    }
+
+    // /SERVER/ServiceKey/IP:PORT -> ServiceKey
+    public static String parseServiceKey(String path) {
+        if(StringUtils.isEmpty(path)){
+            return null;
+        }
+        int lastIndex = path.lastIndexOf("/");
+
+        if(lastIndex > 0){
+            String temp = path.substring(0,lastIndex);
+            int lastSecondIndex = temp.lastIndexOf("/");
+            if(lastSecondIndex > 0){
+                return temp.substring(lastSecondIndex + 1, lastIndex);
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(ServerUtils.parseServiceKey("/Server/ServiceKey/127.0.0.1:3388"));
+        System.out.println(ServerUtils.parseServiceAddress("/Server/ServiceKey/127.0.0.1:3388"));
     }
 }

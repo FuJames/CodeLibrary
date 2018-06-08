@@ -1,5 +1,6 @@
 package code.library.netty4.handler;
 
+import code.library.netty4.RpcFuturePool;
 import code.library.netty4.codec.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -20,14 +21,12 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
     /**
      * client从channel中读取服务器返回的内容
      * @param context
-     * @param msg
+     * @param response
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext context, RpcResponse msg) throws Exception {
-        if(msg != null){
-            System.out.println(msg);
-        }
+    protected void channelRead0(ChannelHandlerContext context, RpcResponse response) throws Exception {
+        RpcFuturePool.reciveResponse(response);
     }
 
     /**

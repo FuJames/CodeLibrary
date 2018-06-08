@@ -1,10 +1,12 @@
 package code.library.netty4.handler;
 
-import code.library.common.dto.UserDTO;
 import code.library.netty4.codec.RpcRequest;
 import code.library.netty4.codec.RpcResponse;
+import code.library.spring.factorybean.ServiceFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by fuqianzhong on 16/9/30.
@@ -12,15 +14,22 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {
-        System.out.println("Server received : " + msg);
+    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
+        System.out.println("Server received : " + request);
         RpcResponse response = new RpcResponse();
-        UserDTO userDTO = new UserDTO();
-        userDTO.setAge(20);
-        userDTO.setName("fqz");
-        userDTO.setAddress("Mars");
-        response.setResult(userDTO);
-        response.setRequestId(msg.getRequestId());
+        response.setRequestId(request.getRequestId());
+        response.setSerialize(request.getSerialize());
+        try {
+            Object serviceBean = ServiceFactory.getServiceBean(request.getServiceKey());
+            Class<?> serviceClass = serviceBean.getClass();
+            Method method = serviceClass.getMethod(request.getMethodName(),request.getParameterTypes());
+            Object result = method.invoke(serviceBean,request.getParameters());
+            System.out.println("Server invoke result : " + result);
+            response.setResult(result);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            response.setError(t);
+        }
         ctx.write(response);
     }
 

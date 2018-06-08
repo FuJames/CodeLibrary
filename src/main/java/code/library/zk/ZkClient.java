@@ -104,15 +104,21 @@ public class ZkClient {
     public static void main(String[] args) throws KeeperException, InterruptedException {
         ZkClient zk = new ZkClient();
         zk.connect();
-        String path = "/test";
-        zk.createNode(path,"hello world", CreateMode.PERSISTENT);
-        zk.createNode(path + "/child","hello child", CreateMode.PERSISTENT);
-        System.out.println(zk.getChildNodes("/"));
+        System.out.println(zk.getChildNodes("/SERVER"));
+        System.out.println(zk.getChildNodes("/SERVER/DemoService_Key"));
 
-        zk.setData(path, "hello 2");
-        System.out.println(zk.getData(path));
-        zk.deleteNode(path + "/child");
-        System.out.println(zk.getChildNodes("/test"));
+
+//        String path = "/test";
+//        zk.createNode(path,"hello world", CreateMode.PERSISTENT);
+//        zk.createNode(path + "/child","hello child", CreateMode.PERSISTENT);
+//        zk.createNode(path + "/seq","123", CreateMode.EPHEMERAL_SEQUENTIAL);
+//        System.out.println(zk.getChildNodes("/test"));
+//
+//        zk.setData(path, "hello 2");
+//        System.out.println(zk.getData(path));
+//        System.out.println(zk.getData(path + "/seq"));
+//        zk.deleteNode(path + "/child");
+//        System.out.println(zk.getChildNodes("/test"));
 
         zk.closeConnection();
 

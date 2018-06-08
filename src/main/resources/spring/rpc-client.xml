@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="demoServiceRpc" class="code.library.spring.factorybean.ClientProxy" init-method="init">
+        <property name="serviceKey" value="DemoService_Key" />
+        <property name="interfaceName" value="code.library.netty4.DemoService" />
+        <property name="serialize" value="hessian" />
+    </bean>
+    <bean id="demoServiceRpc2" class="code.library.spring.factorybean.ClientProxy" init-method="init">
+        <property name="serviceKey" value="DemoService2_Key" />
+        <property name="interfaceName" value="code.library.netty4.DemoService" />
+        <property name="serialize" value="hessian" />
+    </bean>
+    <bean id="demoServiceRpc3" class="code.library.spring.factorybean.ClientProxy" init-method="init">
+        <property name="serviceKey" value="DemoService3_Key" />
+        <property name="interfaceName" value="code.library.netty4.DemoService" />
+        <property name="serialize" value="hessian" />
+    </bean>
+
+</beans>

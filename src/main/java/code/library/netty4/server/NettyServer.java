@@ -5,8 +5,6 @@ import code.library.netty4.codec.NettyEncoder;
 import code.library.netty4.codec.RpcRequest;
 import code.library.netty4.codec.RpcResponse;
 import code.library.netty4.handler.NettyServerHandler;
-import code.library.serializer.HessianSerializer;
-import code.library.serializer.Serializer;
 import code.library.utils.NetUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -24,7 +22,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * 2. 设置Reactor线程池,bossGroup用来处理客户端的连接(acceptor),workerGroup用来处理ChannelSocket的读写(worker thread)
  */
 public class NettyServer {
-    public void doStart(final int port, final Serializer serializer){
+    public void doStart(final int port){
         ServerBootstrap bootstrap = new ServerBootstrap();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -36,8 +34,8 @@ public class NettyServer {
                          @Override
                          protected void initChannel(SocketChannel socketChannel) throws Exception {
                              socketChannel.pipeline()
-                                     .addLast(new NettyEncoder(RpcResponse.class,serializer))//encoder将response转化为字节流
-                                     .addLast(new NettyDecoder(RpcRequest.class,serializer))//decoder将字节流转化为request
+                                     .addLast(new NettyEncoder(RpcResponse.class))//encoder将response转化为字节流
+                                     .addLast(new NettyDecoder(RpcRequest.class))//decoder将字节流转化为request
                                      .addLast(new NettyServerHandler());
                          }
                      });//设置channel的处理类,使用责任链模式,channel对应管道(pipeline),向管道中添加处理类
@@ -54,6 +52,6 @@ public class NettyServer {
 
     public static void main(String[] args) {
         int port = NetUtil.getAvailablePort(0);
-        new NettyServer().doStart(1300, new HessianSerializer());
+        new NettyServer().doStart(1300);
     }
 }

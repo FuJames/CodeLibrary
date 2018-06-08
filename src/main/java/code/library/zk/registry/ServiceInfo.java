@@ -4,17 +4,17 @@ package code.library.zk.registry;
  * @author fuqianzhong
  * @date 18/5/21
  */
-public class ServerConfig {
+public class ServiceInfo {
     private String serviceKey;
 
     private String ip;
 
     private int port;
 
-    public ServerConfig(){
+    public ServiceInfo(){
     }
 
-    public ServerConfig(String serviceKey, String ip, int port) {
+    public ServiceInfo(String serviceKey, String ip, int port) {
         this.serviceKey = serviceKey;
         this.ip = ip;
         this.port = port;

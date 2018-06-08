@@ -1,11 +1,11 @@
 package code.library.zk.registry;
 
 import code.library.netty4.client.NettyClient;
-import code.library.serializer.HessianSerializer;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author fuqianzhong
@@ -13,42 +13,80 @@ import java.util.concurrent.ConcurrentHashMap;
  * 客户端管理类,用于保存客户-服务端连接
  */
 public class ClientManager {
-    private static final ConcurrentHashMap<String, Set<ServerInfo>> servers = new ConcurrentHashMap<String, Set<ServerInfo>>();
+    //保存server对应的连接,一个ip+port对应一个连接
+    private final ConcurrentHashMap<ServerInfo, NettyClient> connections = new ConcurrentHashMap<ServerInfo, NettyClient>();
+    //保存serviceKey对应的连接,一个serviceKey对应多个连接
+    private final ConcurrentHashMap<String, List<NettyClient>> serviceClients = new ConcurrentHashMap<String, List<NettyClient>>();
 
-    public static void registerClient(String serviceKey) throws Exception {
-        //从注册中心获取服务端地址
-        String serviceAddr = ServiceRegistry.getServiceAddr(serviceKey);
+    private ServiceChangeListener serviceChangeListener = new InnerServiceChangeListener();
 
-        //保存服务端地址到本地
-        Set<ServerInfo> serverSet = ServerUtils.parseServerAddress(serviceAddr);
+    private static ClientManager instance = new ClientManager();
 
-        addServers(serviceKey,serverSet);
-
+    private ClientManager(){
+        RegistryListener.addListener(serviceChangeListener);
     }
 
-    public static void addServers(String serviceKey,Set<ServerInfo> serverSet) {
-        //遍历服务端地址,建立netty连接
+    public static ClientManager getInstance(){return instance;}
+
+    public void registerClients(String serviceKey) throws Exception {
+        List<String> serviceAddrList = RegistryManager.getInstance().getServiceAddrList(serviceKey);
+        Set<ServerInfo> serverSet = ServerUtils.parseServerAddressList(serviceAddrList);
+        if(serverSet == null){
+            throw new Exception("service unavailable for " + serviceKey);
+        }
         for(ServerInfo serverInfo : serverSet){
-            NettyClient client = new NettyClient(serverInfo, new HessianSerializer());
-//            client.doConnect();
-        }
-        Set<ServerInfo> serverSetOld = servers.get(serviceKey);
-        if(serverSetOld == null){
-            serverSetOld = Collections.newSetFromMap(new ConcurrentHashMap<ServerInfo, Boolean>());
-        }
-        serverSetOld.addAll(serverSet);
-        servers.put(serviceKey, serverSetOld);
-    }
-
-    public static void removeServers(String serviceKey, Set<ServerInfo> serverSet) {
-        Set<ServerInfo> serverSetOld = servers.get(serviceKey);
-        if(serverSetOld != null){
-            serverSetOld.removeAll(serverSet);
+            registerClient(serviceKey,serverInfo);
         }
     }
 
-    public static Set<ServerInfo> getServers(String serviceKey){
-        return servers.get(serviceKey);
+    public NettyClient selectClient(String serviceKey){
+        return serviceClients.get(serviceKey).get(0);
     }
 
+    private void registerClient(String serviceKey,ServerInfo serverInfo) throws Exception {
+        NettyClient client = connections.get(serverInfo);
+        if(client == null){
+            client = new NettyClient(serverInfo);
+            connections.put(serverInfo,client);
+        }
+        List<NettyClient> clients = serviceClients.get(serviceKey);
+        if(clients == null){
+            clients = new CopyOnWriteArrayList<NettyClient>();
+        }
+        clients.add(client);
+        serviceClients.put(serviceKey,clients);
+
+        RegistryManager.getInstance().addService(serviceKey, serverInfo);
+
+    }
+
+   private void unregisterClient(String serviceKey,ServerInfo serverInfo) throws Exception {
+        NettyClient client = connections.get(serverInfo);
+        if(client != null && client.isValidate()){
+            client.close();
+            connections.remove(serverInfo);
+            List<NettyClient> clients = serviceClients.get(serviceKey);
+            if(clients != null){
+                clients.remove(client);
+            }
+        }
+
+        RegistryManager.getInstance().removeService(serviceKey, serverInfo);
+
+    }
+
+
+
+    private class InnerServiceChangeListener implements ServiceChangeListener {
+
+        @Override
+        public void serverAdded(String serviceKey, ServerInfo serverInfo) throws Exception {
+            registerClient(serviceKey,serverInfo);
+        }
+
+        @Override
+        public void serverRemoved(String serviceKey, ServerInfo serverInfo) throws Exception {
+            unregisterClient(serviceKey,serverInfo);
+        }
+    }
 }

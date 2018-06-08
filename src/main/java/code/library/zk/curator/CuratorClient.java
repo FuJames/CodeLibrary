@@ -51,7 +51,7 @@ public class CuratorClient {
         client.getConnectionStateListenable().addListener(new ConnectionStateListener() {
             @Override
             public void stateChanged(CuratorFramework client, ConnectionState newState) {
-                System.out.println("client state : " + newState.name().toLowerCase());
+                System.out.println("[ZK] Connect Success : " + newState.name().toLowerCase());
             }
         });
         client.getCuratorListenable().addListener(new CuratorEventListener(this), curatorEventListenerThreadPool);
@@ -176,6 +176,7 @@ public class CuratorClient {
     public void createEphemeral(String path) throws Exception {
         createEphemeral(path, null);
     }
+
 
     public boolean exists(String path) throws Exception {
         Stat stat = client.checkExists().watched().forPath(path);

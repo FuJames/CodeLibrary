@@ -1,18 +1,18 @@
 package code.library.netty4.codec;
 
-import java.io.Serializable;
-
 /**
  * @author fuqianzhong
  * @date 18/6/1
  */
-public class RpcResponse implements Serializable{
+public class RpcResponse implements RpcSerializable {
 
     private static final long serialVersionUID = -1186899064204492333L;
 
     private String requestId;
     private Throwable error;
     private Object result;
+    private String serialize;
+
 
     public boolean isError() {
         return error != null;
@@ -43,8 +43,17 @@ public class RpcResponse implements Serializable{
     }
 
     @Override
+    public String getSerialize() {
+        return serialize;
+    }
+
+    @Override
+    public void setSerialize(String serialize) {
+        this.serialize = serialize;
+    }
+    @Override
     public String toString() {
-        return "NettyResponse [requestId=" + requestId + ", error=" + error
+        return "NettyResponse [requestId=" + requestId + ", error=" + error+ ", serialize=" + serialize
                 + ", result=" + result + "]";
     }
 }

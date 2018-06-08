@@ -1,21 +1,23 @@
 package code.library.netty4.codec;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * @author fuqianzhong
  * @date 18/6/1
  */
-public class RpcRequest implements Serializable{
+public class RpcRequest implements RpcSerializable {
     private static final long serialVersionUID = -6898431081897296544L;
 
     private String requestId;
+    private String serviceKey;
     private long createMillisTime;
     private String className;
     private String methodName;
     private Class<?>[] parameterTypes;
     private Object[] parameters;
+    private String serialize;
+    private long timeout = 1000;
 
     public String getRequestId() {
         return requestId;
@@ -54,11 +56,37 @@ public class RpcRequest implements Serializable{
         this.parameters = parameters;
     }
 
+    public String getServiceKey() {
+        return serviceKey;
+    }
+
+    public void setServiceKey(String serviceKey) {
+        this.serviceKey = serviceKey;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+
+    @Override
+    public String getSerialize() {
+        return serialize;
+    }
+
+    @Override
+    public void setSerialize(String serialize) {
+        this.serialize = serialize;
+    }
+
     @Override
     public String toString() {
         return "NettyRequest [requestId=" + requestId + ", createMillisTime="
                 + createMillisTime + ", className=" + className
-                + ", methodName=" + methodName + ", parameterTypes="
+                + ", methodName=" + methodName + ", serialize=" + serialize + ", parameterTypes="
                 + Arrays.toString(parameterTypes) + ", parameters="
                 + Arrays.toString(parameters) + "]";
     }

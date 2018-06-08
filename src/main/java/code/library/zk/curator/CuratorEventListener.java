@@ -1,6 +1,6 @@
 package code.library.zk.curator;
 
-import code.library.zk.registry.ServiceRegistry;
+import code.library.zk.registry.RegistryManager;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.framework.api.CuratorListener;
@@ -27,8 +27,7 @@ public class CuratorEventListener implements CuratorListener {
             return;
         }
         String path = event.getPath();
-        String addr = this.client.getData(path);
-        ServiceRegistry.notifyClients(path, addr);
+        RegistryManager.getInstance().notifyClients(path);
     }
 }
 

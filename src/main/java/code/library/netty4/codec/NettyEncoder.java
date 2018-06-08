@@ -1,6 +1,8 @@
 package code.library.netty4.codec;
 
 import code.library.serializer.Serializer;
+import code.library.serializer.SerializerFactory;
+import code.library.serializer.SerializerType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -12,18 +14,21 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class NettyEncoder extends MessageToByteEncoder<Object> {
     private Class<?> msgClass;
-    private Serializer serializer;
 
-    public NettyEncoder(Class<?> msgClass,Serializer serializer){
+    public NettyEncoder(Class<?> msgClass){
         this.msgClass = msgClass;
-        this.serializer = serializer;
     }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         if(msgClass.isInstance(msg)){
+            RpcSerializable serializable = (RpcSerializable) msg;
+            SerializerType serializerType = SerializerType.getSerializerType(serializable.getSerialize());
+            Serializer serializer = SerializerFactory.getSerializer(serializerType);
             byte[] bytes = serializer.serialize(msg);
+            out.writeByte(serializerType.getCode());
             out.writeInt(bytes.length);
+//            out.writeInt(Integer.MAX_VALUE);
             out.writeBytes(bytes);
         }
     }

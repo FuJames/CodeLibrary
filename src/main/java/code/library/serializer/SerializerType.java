@@ -1,5 +1,7 @@
 package code.library.serializer;
 
+import org.springframework.util.StringUtils;
+
 /**
  * @author fuqianzhong
  * @date 18/5/16
@@ -7,11 +9,8 @@ package code.library.serializer;
 public enum SerializerType {
     JAVA((byte) 1, "java"),
 
-    HESSIAN((byte) 2, "hessian"),
-
-    PROTOBUF((byte) 9, "protobuf"),
-
-    THRIFT((byte) 10, "thrift");
+    HESSIAN((byte) 2, "hessian")
+    ;
 
     private byte code;
     private String name;
@@ -19,6 +18,30 @@ public enum SerializerType {
     SerializerType(byte code, String name) {
         this.code = code;
         this.name = name;
+    }
+
+    public static SerializerType getSerializerType(String name){
+        SerializerType type = null;
+        if(!StringUtils.isEmpty(name)) {
+            for (SerializerType serializerType : SerializerType.values()) {
+                if (name.equals(serializerType.getName())) {
+                    type = serializerType;
+                }
+            }
+        }
+        return type;
+    }
+
+    public static SerializerType getSerializerType(byte code) {
+        switch (code) {
+            case 1:
+                return JAVA;
+            case 2:
+                return HESSIAN;
+            default:
+                throw new IllegalArgumentException("invalid serializerType code: " + code);
+
+        }
     }
 
     public byte getCode() {
