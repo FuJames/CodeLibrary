@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- 配置数据源 -->
+    <bean id="quartzDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${driver}"/>
+        <property name="jdbcUrl" value="${url}"/>
+        <property name="user" value="${username}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+    <!-- 配置job -->
+    <bean id="jobHelloDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="code.library.job.quartz.SpringQuartzJob"/> <!-- job实现类 -->
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="name" value="fqz" />
+            </map>
+        </property>
+    </bean>
+    <!-- 配置trigger -->
+    <bean id="jobHelloTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="jobHelloDetail" /> <!-- 对应的 job detail-->
+        <property name="cronExpression" value="*/3 * * * * ?" /> <!--cronExpression 表达式 -->
+    </bean>
+    <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="dataSource" ref="quartzDataSource" /> <!--数据源引用指向，包含集群所需的所有表 -->
+        <!--applicationContextSchedulerContextKey： 是org.springframework.scheduling.quartz.SchedulerFactoryBean这个类中把spring上下
+         文以key/value的方式存放在了quartz的上下文中了，可以用applicationContextSchedulerContextKey所定义的key得到对应的spring上下文， 可以看下源码注释-->
+        <property name="applicationContextSchedulerContextKey" value="applicationContextKey" />
+        <property name="configLocation" value="classpath:properties/quartz.properties" /> <!--用于指明quartz的配置文件的位置 -->
+        <!-- job trigger 实例加载到 scheduler factory中 -->
+        <!--<property name="triggers">-->
+            <!--<list>-->
+                <!--<ref bean="jobHelloTrigger" />-->
+            <!--</list>-->
+        <!--</property>-->
+    </bean>
+
+
+</beans>
