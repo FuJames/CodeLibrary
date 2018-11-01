@@ -22,7 +22,23 @@ public class LambdaTester {
         b = b.add(new BigDecimal("10"));
         System.out.println(b);
 //        testFilter();
-        testSort();
+//        testSort();
+        testMap();
+    }
+
+    private static void testMap() {
+        List<Student> students = Arrays.asList(new Student(20,"f"),new Student(10,"b"),new Student(50,"g"),new Student(60,"c"),new Student(30,"a"));
+
+        List<People> peopleList = students.stream().map(student -> {
+            if(student.getAge() > 1000 ){
+                return new People(student.getAge(),student.getName());
+            }else {
+                return null;
+            }
+        }).filter(people -> people != null).collect(Collectors.toList());
+
+        peopleList.stream().forEach(System.out::println);
+
     }
 
     private static void testFilter(){
@@ -77,6 +93,41 @@ public class LambdaTester {
 
 
     }
+
+    private static class People{
+        private int age;
+        private String name;
+
+        public People(int age, String name) {
+            this.age = age;
+            this.name = name;
+        }
+
+        public People() {
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString(){
+            return "name:" + name + ", age:" + age;
+        }
+    }
+
 
     private static class Student implements Comparable<Student>{
         private int age;
