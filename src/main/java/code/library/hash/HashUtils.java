@@ -98,11 +98,15 @@ public class HashUtils {
             if(map.get(key) != null){
                 flag = false;
                 map.put(key,true);
+            }else {
+                map.put(key,true);
             }
             System.out.println((double)key/Integer.MAX_VALUE);
         }
         if(flag){
-            System.out.println("Hash FNV_32 No Conflicts");
+            System.out.println("FNV_32 Has No Conflicts");
+        }else {
+            System.out.println("FNV_32 Has Conflicts");
         }
 
         System.out.println(">>>>>>Hash Ketama<<<<<<");
@@ -113,11 +117,15 @@ public class HashUtils {
             if(map2.get(key) != null){
                 flag2 = false;
                 map2.put(key,true);
+            }else {
+                map2.put(key,true);
             }
             System.out.println((double)key/Integer.MAX_VALUE);
         }
         if(flag2){
-            System.out.println("Hash Ketama No Conflicts");
+            System.out.println("Ketama Hash No Conflicts");
+        }else {
+            System.out.println("Ketama Hash Conflicts");
         }
 
     }

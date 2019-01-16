@@ -16,19 +16,19 @@
     </bean>
 
     <!-- 配置job -->
-    <bean id="jobHelloDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-        <property name="jobClass" value="code.library.job.quartz.SpringQuartzJob"/> <!-- job实现类 -->
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="name" value="fqz" />
-            </map>
-        </property>
-    </bean>
+    <!--<bean id="jobHelloDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">-->
+        <!--<property name="jobClass" value="code.library.job.quartz.SpringQuartzJob"/> &lt;!&ndash; job实现类 &ndash;&gt;-->
+        <!--<property name="jobDataAsMap">-->
+            <!--<map>-->
+                <!--<entry key="name" value="fqz" />-->
+            <!--</map>-->
+        <!--</property>-->
+    <!--</bean>-->
     <!-- 配置trigger -->
-    <bean id="jobHelloTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail" ref="jobHelloDetail" /> <!-- 对应的 job detail-->
-        <property name="cronExpression" value="*/3 * * * * ?" /> <!--cronExpression 表达式 -->
-    </bean>
+    <!--<bean id="jobHelloTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">-->
+        <!--<property name="jobDetail" ref="jobHelloDetail" /> &lt;!&ndash; 对应的 job detail&ndash;&gt;-->
+        <!--<property name="cronExpression" value="*/3 * * * * ?" /> &lt;!&ndash;cronExpression 表达式 &ndash;&gt;-->
+    <!--</bean>-->
     <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="dataSource" ref="quartzDataSource" /> <!--数据源引用指向，包含集群所需的所有表 -->
         <!--applicationContextSchedulerContextKey： 是org.springframework.scheduling.quartz.SchedulerFactoryBean这个类中把spring上下

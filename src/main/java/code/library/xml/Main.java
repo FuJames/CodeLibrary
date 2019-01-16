@@ -34,6 +34,7 @@ public class Main {
         doList(list,0);
         System.out.println(list);
 
+
     }
 
     public static void doList(List<Integer> list,int max){
@@ -47,4 +48,6 @@ public class Main {
         }
 //        list = list.subList(0,5);
     }
+
+
 }
