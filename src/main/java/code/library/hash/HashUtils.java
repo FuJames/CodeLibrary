@@ -52,6 +52,24 @@ public class HashUtils {
         return hash;
     }
 
+    //CRC16 哈希算法,redis cluster使用到
+    public static int getHashCRC16(String key){
+
+        byte[] buffer = key.getBytes();
+        int crc = 0xFFFF;
+
+        for (int j = 0; j < buffer.length ; j++) {
+            crc = ((crc  >>> 8) | (crc  << 8) )& 0xffff;
+            crc ^= (buffer[j] & 0xff);//byte to int, trunc sign
+            crc ^= ((crc & 0xff) >> 4);
+            crc ^= (crc << 12) & 0xffff;
+            crc ^= ((crc & 0xFF) << 5) & 0xffff;
+        }
+        crc &= 0xffff;
+
+        return crc;
+    }
+
     //测试:3台server,每台server对应10台虚拟节点
     public static void main(String[] args) {
         List<String> servers = Lists.newArrayList();
@@ -126,6 +144,13 @@ public class HashUtils {
             System.out.println("Ketama Hash No Conflicts");
         }else {
             System.out.println("Ketama Hash Conflicts");
+        }
+
+        System.out.println(">>>>>>Hash CRC16<<<<<<");
+
+        for(String server : servers){
+            int key = getHashCRC16(server);
+            System.out.println(key);
         }
 
     }

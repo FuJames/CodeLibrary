@@ -1,0 +1,4 @@
+1. lock() 申请锁,如果没有申请到,一直阻塞
+2. tryLock() 方法试图申请一个锁，在成功获得锁后返回true,否则，立即返回false,而且线程可以立即离开去做其他的事情
+3. tryLock(long timeout, TimeUnit unit) 如果成功,则返回true;否则阻塞线程直到超时,并立即返回false;线程可以立即离开去做其他的事情
+4. lockInterruptibly() 获取锁，如果线程被中断，抛出一个InterruptedException异常,线程停止阻塞;否则,一直阻塞,直到获取锁。
